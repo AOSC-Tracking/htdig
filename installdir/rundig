@@ -103,5 +103,5 @@ EOF
     $BINDIR/htfuzzy $opts synonyms
 fi
 
-@BIN_DIR@/htfuzzy $verbose metaphone
-@BIN_DIR@/htfuzzy $verbose soundex
+@BIN_DIR@/htfuzzy $opts $verbose metaphone
+@BIN_DIR@/htfuzzy $opts $verbose soundex
