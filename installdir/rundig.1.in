@@ -23,6 +23,9 @@ Print statistics about the dig after completion
 .TP
 .B \-c configfile
 Use alternate config file.
+.TP
+.B \+i
+Use incremental digging instead non-incremental
 .SH "SEE ALSO"
 Please refer to the HTML pages (in the htdig-doc package)
 .B /usr/share/doc/htdig-doc/html/index.html

@@ -14,6 +14,7 @@ conffile=/etc/htdig/htdig.conf
 
 # To help debug problems, try running rundig -vvv
 # This will add lots of debugging output to all of the programs
++incremental=0
 stats= opts= alt= nohtnotify=
 while [ "$#" -gt 0 ]
 do
@@ -25,6 +26,7 @@ do
          conffile="$1"
 	 opts="$opts -c $conffile"
 	;;
+    +i) incremental=1;;
     *)   opts="$opts $1" ;;	# e.g. -v
     esac
     shift
@@ -54,7 +56,13 @@ fi
 TMPDIR=$DBDIR
 export TMPDIR
 
-$BINDIR/htdig -i $opts $stats $alt
+if [ $incremental -ne 0 ]
+then
+    $BINDIR/htdig $opts $stats $alt
+else
+    $BINDIR/htdig -i $opts $stats $alt
+fi
+
 $BINDIR/htpurge $opts $alt
 case "$alt" in
 -a)
