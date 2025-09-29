@@ -31,6 +31,8 @@ static const char sccsid[] = "@(#)os_map.c	11.10 (Sleepycat) 10/31/99";
 #endif
 
 #include "db_int.h"
+#include "db_page.h"
+#include "db_ext.h"
 #include "os_jump.h"
 
 #ifdef HAVE_MMAP
