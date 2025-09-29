@@ -153,6 +153,9 @@ Soundex::addWord(char *word)
 
     String	key;
     generateKey(word, key);
+    if (key.length() == 0 || mystrcasecmp(word, key.get()) == 0 ||
+				mystrcasecmp("0", key.get()) == 0) 
+	return;
 
     String	*s = (String *) dict->Find(key);
     if (s)
