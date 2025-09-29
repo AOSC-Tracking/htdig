@@ -158,7 +158,8 @@ int main(int ac, char **av)
     if(words.Open(config->Find("word_db"), O_RDONLY) == OK)
       {
 	cout << "htstat: Total words: " << words.WordRefs()->Count() << endl;
-	cout << "htstat: Total unique words: " << words.Words()->Count() << endl;
+	if (words.WordRefs()->Count() != 0)
+	  cout << "htstat: Total unique words: " << words.Words()->Count() << endl;
 	words.Close();
       }
 
