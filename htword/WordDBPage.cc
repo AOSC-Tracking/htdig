@@ -155,7 +155,7 @@ WordDBPage::Uncompress(Compressor *pin,int  ndebug, DB_CMPR_INFO */*=NULL*/)
 	Uncompress_main(pin);
 	break;
     case CMPRTYPE_BADCOMPRESS:// this page did not compress correctly
-	pin->get_zone((byte *)pg,pgsz*8,"INITIALBUFFER");
+	pin->get_zone((byte_t *)pg,pgsz*8,"INITIALBUFFER");
 	break;
     default:
 	errr("WordDBPage::Uncompress: CMPRTYPE incoherent");
@@ -181,7 +181,7 @@ WordDBPage::Uncompress_main(Compressor *pin)
     int *rnum_sizes=new int[nnums];
     CHECK_MEM(rnum_sizes);
     // char differences between words
-    byte *rworddiffs=NULL;
+    byte_t *rworddiffs=NULL;
     int nrworddiffs;
 
     // *********** read header
@@ -288,7 +288,7 @@ WordDBPage::Uncompress_header(Compressor &in)
     return OK;
 }
 void 
-WordDBPage::Uncompress_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums0,byte *rworddiffs,int nrworddiffs)
+WordDBPage::Uncompress_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums0,byte_t *rworddiffs,int nrworddiffs)
 {
     int irwordiffs=0;
     int nfields=WordKey::NFields();
@@ -405,7 +405,7 @@ WordDBPage::Uncompress_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums0,b
 
 // display
 void 
-WordDBPage::Uncompress_show_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums0,byte *rworddiffs,int nrworddiffs)
+WordDBPage::Uncompress_show_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums0,byte_t *rworddiffs,int nrworddiffs)
 {
     int i,j;
     if(verbose)
@@ -464,7 +464,7 @@ WordDBPage::Compress(int ndebug, DB_CMPR_INFO *cmprInfo/*=NULL*/)
 	res->put_uint(COMPRESS_VERSION,NBITS_COMPRESS_VERSION,"COMPRESS_VERSION");
 	res->put_uint(CMPRTYPE_BADCOMPRESS,NBITS_CMPRTYPE,"CMPRTYPE");
 
-	res->put_zone((byte *)pg,pgsz*8,"INITIALBUFFER");
+	res->put_zone((byte_t *)pg,pgsz*8,"INITIALBUFFER");
     }
 
     if(verbose)
@@ -761,7 +761,7 @@ WordDBPage::Compare(WordDBPage &other)
 	printf("compare failed in some unknown place in header:\n");
 	for(i=0;i<(int)(sizeof(PAGE)-sizeof(db_indx_t));i++)
 	{
-	    printf("%3d: %3x %3x\n",i,((byte *)pg)[i],((byte *)other.pg)[i]);
+	    printf("%3d: %3x %3x\n",i,((byte_t *)pg)[i],((byte_t *)other.pg)[i]);
 	}
     }
 
@@ -998,7 +998,7 @@ WordDBPage::show()
 	  printf("%5d: ",nn);
 	  for(j=0;j<20;j++)
 	  {
-	      printf("%2x ",((byte *)pg)[nn++]);
+	      printf("%2x ",((byte_t *)pg)[nn++]);
 	      if(nn>=pgsz){break;}
 	  }
 	  printf("\n");

@@ -28,9 +28,9 @@
 #include"HtVector_int.h"
 #include"HtMaxMin.h"
 
-typedef unsigned char byte;
+typedef unsigned char byte_t;
 // ******** HtVector_byte (header)
-#define GType byte
+#define GType byte_t
 #define HtVectorGType HtVector_byte
 #include "HtVectorGeneric.h"
 
@@ -123,12 +123,12 @@ public:
     }
 
     // gets a bit from the bitstream
-    inline byte get(const char *tag=(char*)NULL)
+    inline byte_t get(const char *tag=(char*)NULL)
     {
 	// SPEED CRITICAL SECTION
 	if(check_tag(tag)==NOTOK){errr("BitStream::get() check_tag failed");}
 	if(bitpos>=(buff.size()<<3)){errr("BitStream::get reading past end of BitStream!");}
-	byte res=buff[bitpos>>3] & pow2(bitpos & 0x07);
+	byte_t res=buff[bitpos>>3] & pow2(bitpos & 0x07);
 //  	printf("get:res:%d bitpos:%5d/%d buff[%3d]=%x\n",res,bitpos,bitpos%8,bitpos/8,buff[bitpos/8]);
 	bitpos++;
 	return(res);
@@ -139,8 +139,8 @@ public:
     unsigned int get_uint(               int n,const char *tag=(char*)NULL);
 
     // get/put n bits of data stored in vals
-    void put_zone(byte *vals,int n,const char *tag);
-    void get_zone(byte *vals,int n,const char *tag);
+    void put_zone(byte_t *vals,int n,const char *tag);
+    void get_zone(byte_t *vals,int n,const char *tag);
 
     // 
     inline void add_tag(const char *tag)
@@ -167,9 +167,9 @@ public:
     int buffsize(){return(buff.size());}
 
     // get a copy of the buffer
-    byte *get_data();
+    byte_t *get_data();
     // set the buffer from outside data (current buffer must be empty)
-    void set_data(const byte *nbuff,int nbits);
+    void set_data(const byte_t *nbuff,int nbits);
       
     // use this for reading a BitStream after you have written in it 
     // (generally for debuging)
@@ -211,7 +211,7 @@ public:
 #define NBITS_VAL 32
 // number of bits to code he number of bits used by an unsigned int value
 #define NBITS_NBITS_VAL  5
-// number of bits to code the number of bits used by a byte value
+// number of bits to code the number of bits used by a byte_t value
 #define NBITS_NBITS_CHARVAL 4
 
 class Compressor : public BitStream
@@ -240,8 +240,8 @@ public:
     int get_vals(unsigned int **pres,const char *tag=(char*)"BADTAG!");
 
     // compress/decompress an array of bytes (very simple)
-    int put_fixedbitl(byte *vals,int n,const char *tag);    
-    int get_fixedbitl(byte **pres,const char *tag=(char*)"BADTAG!");
+    int put_fixedbitl(byte_t *vals,int n,const char *tag);
+    int get_fixedbitl(byte_t **pres,const char *tag=(char*)"BADTAG!");
 
     // compress/decompress an array of unsigned ints (very simple)
     void get_fixedbitl(unsigned int *res,int n);

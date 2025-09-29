@@ -65,7 +65,7 @@ public:
 	}
     }
     WordDBRecord():WordRecord(){;}
-    WordDBRecord(byte *dat,int len,int rectyp):WordRecord()
+    WordDBRecord(byte_t *dat,int len,int rectyp):WordRecord()
     {
 	type=(rectyp ? DefaultType() : WORD_RECORD_STATS);
 	Unpack(String((char *)dat,len));
@@ -118,7 +118,7 @@ public:
 	}
 	else{Unpack(String((char *)nkey->data,nkey->len));}
     }
-    WordDBKey(byte *data,int len):WordKey()
+    WordDBKey(byte_t *data,int len):WordKey()
     {
 	key=NULL;
 	if(!data || !len){errr("WordDBKey::WordDBKey(data,len) !data || !len");}
@@ -207,7 +207,7 @@ class WordDBPage
     void *alloc_entry(int size)
     {
 	size=WORD_ALIGN_TO(size,4);	
-	int inp_pos=((byte *)&(pg->inp[insert_indx]))-(byte *)pg;
+	int inp_pos=((byte_t *)&(pg->inp[insert_indx]))-(byte_t *)pg;
 	insert_pos-=size;
 	if(insert_pos<=inp_pos)
 	{
@@ -216,7 +216,7 @@ class WordDBPage
 	    errr("WordDBPage::alloc_entry: PAGE OVERFLOW");
 	}
 	pg->inp[insert_indx++]=insert_pos;
-	return((void *)((byte *)pg+insert_pos));
+	return((void *)((byte_t *)pg+insert_pos));
     }
 
     
@@ -260,11 +260,11 @@ class WordDBPage
 	    ky.Pack(pkey);
 	    keylen=pkey.length();
 	}
-	int size=keylen+((byte *)&(bti.data))-((byte *)&bti);// pos of data field in BINTERNAL
+	int size=keylen+((byte_t *)&(bti.data))-((byte_t *)&bti);// pos of data field in BINTERNAL
 	if(empty)
 	{
 	    if(verbose){printf("WordDBPage::insert_btikey: empty : BINTERNAL:%d datapos:%d keylen:%d size:%d alligned to:%d\n",(int)sizeof(BINTERNAL),
-			       (int)(((byte *)&(bti.data))-((byte *)&bti)),
+			       (int)(((byte_t *)&(bti.data))-((byte_t *)&bti)),
 			       keylen,size,WORD_ALIGN_TO(size,4));}
 	}
 
@@ -306,8 +306,8 @@ class WordDBPage
     int  Uncompress_main(Compressor *pin);
     void Uncompress_vals_chaged_flags(Compressor &in,unsigned int **pcflags,int *pn);
     int  Uncompress_header(Compressor &in);
-    void Uncompress_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums,byte *rworddiffs,int nrworddiffs);
-    void Uncompress_show_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums,byte *rworddiffs,int nrworddiffs);
+    void Uncompress_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums,byte_t *rworddiffs,int nrworddiffs);
+    void Uncompress_show_rebuild(unsigned int **rnums,int *rnum_sizes,int nnums,byte_t *rworddiffs,int nrworddiffs);
 
     int TestCompress(int debuglevel);
     int Compare(WordDBPage &other);
@@ -326,14 +326,14 @@ class WordDBPage
 	    out.put_uint(btikey(i)->type ,sizeof(btikey(i)->type )*8,label_str("seperatekey_bti_type" ,i));
 	    out.put_uint(btikey(i)->pgno ,sizeof(btikey(i)->pgno )*8,label_str("seperatekey_bti_pgno" ,i));
 	    out.put_uint(btikey(i)->nrecs,sizeof(btikey(i)->nrecs)*8,label_str("seperatekey_bti_nrecs",i));
-	    if(len){out.put_zone((byte *)btikey(i)->data,8*len,label_str("seperatekey_btidata",i));}
+	    if(len){out.put_zone((byte_t *)btikey(i)->data,8*len,label_str("seperatekey_btidata",i));}
 	}
 	else
 	{
 	    int len=key(i)->len;
 	    out.put_uint(len,NBITS_KEYLEN,label_str("seperatekey_len",i));
 	    if(verbose){printf("WordDBPage::compress_key: compress(typ5):%d\n",len);}
-	    out.put_zone((byte *)key(i)->data,8*len,label_str("seperatekey_data",i));
+	    out.put_zone((byte_t *)key(i)->data,8*len,label_str("seperatekey_data",i));
 	}
     }
     void compress_data(Compressor &out,int i)
@@ -341,7 +341,7 @@ class WordDBPage
 	int len=data(i)->len;
 	out.put_uint(len,NBITS_DATALEN,label_str("seperatedata_len",i));
 	if(verbose){printf("WordDBPage::compress_data: compressdata(typ5):%d\n",len);}
-	out.put_zone((byte *)data(i)->data,8*len,label_str("seperatedata_data",i));
+	out.put_zone((byte_t *)data(i)->data,8*len,label_str("seperatedata_data",i));
     }
     WordDBKey uncompress_key(Compressor &in,int i)
     {
@@ -360,7 +360,7 @@ class WordDBPage
 	    if(len!=bti.len){errr("WordDBPage::uncompress_key: incoherence: len!=bti.len");}
 	    if(len)
 	    {
-		byte *gotdata=new byte[len];
+		byte_t *gotdata=new byte_t[len];
 		CHECK_MEM(gotdata);
 		in.get_zone(gotdata,8*len,label_str("seperatekey_btidata",i));
 		res=WordDBKey(gotdata,len);
@@ -370,7 +370,7 @@ class WordDBPage
 	}
 	else
 	{
-	    byte *gotdata=new byte[len];
+	    byte_t *gotdata=new byte_t[len];
 	    CHECK_MEM(gotdata);
 	    in.get_zone(gotdata,8*len,label_str("seperatekey_data",i));
 	    res=WordDBKey(gotdata,len);
@@ -384,7 +384,7 @@ class WordDBPage
 	WordDBRecord res;
 	int len=in.get_uint(NBITS_DATALEN,label_str("seperatedata_len",i));
 	if(verbose)printf("uncompressdata:len:%d\n",len);
-	byte *gotdata=new byte[len];
+	byte_t *gotdata=new byte_t[len];
 	CHECK_MEM(gotdata);
 	in.get_zone(gotdata,8*len,label_str("seperatedata_data",i));
 	res=WordDBRecord(gotdata,len,rectyp);
@@ -488,7 +488,7 @@ class WordDBPage
     {
 	init0();
 	pgsz=npgsz;
-	pg=(PAGE *)(new byte[pgsz]);
+	pg=(PAGE *)(new byte_t[pgsz]);
 	CHECK_MEM(pg);
 	insert_pos=pgsz;
 	insert_indx=0;
